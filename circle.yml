@@ -22,7 +22,6 @@ deployment:
     commands:
       - docker run --rm -v "$PWD":/app rabaco/nginx-php-fpm patch
       - version=`cat VERSION`
-      - echo "BUILD VERSION: $version"
       - docker tag rabaco/nginx-php-fpm:latest rabaco/nginx-php-fpm:$version
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push rabaco/nginx-php-fpm:latest
