@@ -2,6 +2,10 @@ machine:
   services:
     - docker
 
+checkout:
+    post:
+        - chmod +x ./deploy/trigger.sh
+
 dependencies:
   cache_directories:
     - "~/docker"
@@ -20,6 +24,4 @@ deployment:
   hub:
     branch: master
     commands:
-      - version=`cat VERSION`
-      - curl -H "Content-Type: application/json" --data '{"source_type": "Tag", "source_name": "latest"}' -X POST https://registry.hub.docker.com/u/rabaco/nginx-php-fpm/trigger/$TRIGGER_TOKEN/
-      - curl -H "Content-Type: application/json" --data '{"source_type": "Tag", "source_name": "$version"}' -X POST https://registry.hub.docker.com/u/rabaco/nginx-php-fpm/trigger/$TRIGGER_TOKEN/
+      - ./deploy/trigger.sh
