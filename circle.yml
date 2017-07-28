@@ -7,22 +7,22 @@ dependencies:
     - "~/docker"
   override:
     - docker info
-    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
+    - docker images
     - docker build --rm=false -t rabaco/nginx-php-fpm:latest .
-    - mkdir -p ~/docker; docker save rabaco/nginx-php-fpm:latest > ~/docker/image.tar
+    - docker images
 
 test:
   override:
     - docker run -d -p 8080:80 rabaco/nginx-php-fpm:latest; sleep 10
+    - docker ps
     - curl --retry 10 --retry-delay 5 -v http://localhost:8080
 
 deployment:
   hub:
     branch: master
     commands:
-      - docker run --rm -v "$PWD":/app rabaco/nginx-php-fpm patch
       - version=`cat VERSION`
-      - docker tag rabaco/nginx-php-fpm:latest rabaco/nginx-php-fpm:$version
+      - docker tag -f rabaco/nginx-php-fpm:latest rabaco/nginx-php-fpm:$version
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push rabaco/nginx-php-fpm:latest
       - docker push rabaco/nginx-php-fpm:$version
