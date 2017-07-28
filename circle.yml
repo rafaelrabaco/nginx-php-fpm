@@ -7,7 +7,9 @@ dependencies:
     - "~/docker"
   override:
     - docker info
-    - docker build -t rabaco/nginx-php-fpm:latest .
+    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
+    - docker build --rm=false -t rabaco/nginx-php-fpm:latest .
+    - mkdir -p ~/docker; docker save rabaco/nginx-php-fpm:latest > ~/docker/image.tar
 
 test:
   override:
@@ -20,6 +22,7 @@ deployment:
     commands:
       - docker run --rm -v "$PWD":/app rabaco/nginx-php-fpm patch
       - version=`cat VERSION`
+      - echo "BUILD VERSION: $version"
       - docker tag rabaco/nginx-php-fpm:latest rabaco/nginx-php-fpm:$version
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push rabaco/nginx-php-fpm:latest
