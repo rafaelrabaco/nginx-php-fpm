@@ -7,7 +7,6 @@ dependencies:
     - "~/docker"
   override:
     - docker info
-    - docker images
     - docker build --rm=false -t rabaco/nginx-php-fpm:latest .
     - docker images
 
@@ -22,7 +21,5 @@ deployment:
     branch: master
     commands:
       - version=`cat VERSION`
-      - docker tag -f rabaco/nginx-php-fpm:latest rabaco/nginx-php-fpm:$version
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker push rabaco/nginx-php-fpm:latest
-      - docker push rabaco/nginx-php-fpm:$version
+      - curl -H "Content-Type: application/json" --data '{"source_type": "Tag", "source_name": "latest"}' -X POST https://registry.hub.docker.com/u/rabaco/nginx-php-fpm/trigger/$TRIGGER_TOKEN/
+      - curl -H "Content-Type: application/json" --data '{"source_type": "Tag", "source_name": "$version"}' -X POST https://registry.hub.docker.com/u/rabaco/nginx-php-fpm/trigger/$TRIGGER_TOKEN/
