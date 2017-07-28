@@ -3,13 +3,12 @@ FROM alpine:3.6
 MAINTAINER rabaco <rafaelrabaco@gmail.com>
 
 ENV NGINX_VERSION 1.12.0
-ENV COMPOSER_VERSION 1.1.2
 
 # Install packages for running application
 RUN apk --no-cache add php7-fpm php7-mcrypt php7-curl php7-gd  php7-intl php7-mbstring php7-opcache \
     php7-pdo_mysql php7-json php7-openssl php7-ctype php7-session php7-xml php7-dom php7-tokenizer \
     php7-fileinfo php7-zip php7-xmlwriter \
-    git openrc curl nginx supervisor \
+    git curl nginx supervisor \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/main/ \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community && \
@@ -59,6 +58,7 @@ RUN cd nginx-${NGINX_VERSION} \
     && rm -rf /tmp/*
 
 RUN rm nginx-${NGINX_VERSION}.tar.gz
+RUN rm -rf nginx-${NGINX_VERSION}
 
 # Install composer
 RUN apk --no-cache add php7 php7-common php7-cli php7-phar php7-json \
@@ -77,10 +77,9 @@ ADD conf/nginx/headers.conf /etc/nginx/headers.conf
 COPY conf/php/fpm-pool.conf /etc/php7/php-fpm.d/zzz_custom.conf
 COPY conf/php/php.ini /etc/php7/conf.d/zzz_custom.ini
 
-# Configure supervisord
-COPY conf/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD conf/supervisord/supervisord.conf /etc/supervisord.conf
 
 ADD VERSION .
 
 EXPOSE 80 443
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["supervisord"]
