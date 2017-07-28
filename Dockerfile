@@ -79,5 +79,7 @@ COPY conf/php/php.ini /etc/php7/conf.d/zzz_custom.ini
 # Configure supervisord
 COPY conf/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+ADD VERSION .
+
 EXPOSE 80 443
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

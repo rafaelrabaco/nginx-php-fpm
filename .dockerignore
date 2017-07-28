@@ -1,0 +1,12 @@
+# Git
+.git
+circle.yml
+README.md
+
+
+# IDE
+.idea
+nbproject
+.buildpath
+.project
+.settings
