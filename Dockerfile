@@ -8,6 +8,7 @@ ENV COMPOSER_VERSION 1.1.2
 # Install packages for running application
 RUN apk --no-cache add php7-fpm php7-mcrypt php7-curl php7-gd  php7-intl php7-mbstring php7-opcache \
     php7-pdo_mysql php7-json php7-openssl php7-ctype php7-session php7-xml php7-dom php7-tokenizer \
+    php7-fileinfo php7-zip php7-xmlwriter \
     git curl nginx supervisor \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/main/ \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
