@@ -78,8 +78,8 @@ COPY conf/php/fpm-pool.conf /etc/php7/php-fpm.d/zzz_custom.conf
 COPY conf/php/php.ini /etc/php7/conf.d/zzz_custom.ini
 
 ADD conf/supervisord/supervisord.conf /etc/supervisord.conf
-COPY conf/service.sh /service
-RUN chmod +x /service
+COPY conf/service.sh /usr/bin/service
+RUN chmod +x /usr/bin/service
 
 ADD VERSION .
 
