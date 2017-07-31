@@ -3,6 +3,7 @@ FROM alpine:3.6
 MAINTAINER rabaco <rafaelrabaco@gmail.com>
 
 ENV NGINX_VERSION 1.12.0
+ENV SUPERVISOR_VERSION=3.3.3
 
 # Install packages for running application
 RUN apk --no-cache add php7-fpm php7-mcrypt php7-curl php7-gd  php7-intl php7-mbstring php7-opcache \
@@ -54,7 +55,7 @@ RUN cd nginx-${NGINX_VERSION} \
     && make install \
     && sed -i -e 's/#access_log  logs\/access.log  main;/access_log \/dev\/stdout;/' -e 's/#error_log  logs\/error.log  notice;/error_log stderr notice;/' /etc/nginx/nginx.conf \
     && mkdir -p /var/cache/nginx \
-    && apk del .build-deps \
+    && apk del .build-deps build-base linux-headers \
     && rm -rf /tmp/*
 
 RUN rm nginx-${NGINX_VERSION}.tar.gz
@@ -78,10 +79,12 @@ COPY conf/php/fpm-pool.conf /etc/php7/php-fpm.d/zzz_custom.conf
 COPY conf/php/php.ini /etc/php7/conf.d/zzz_custom.ini
 
 ADD conf/supervisord/supervisord.conf /etc/supervisord.conf
-COPY conf/service.sh /usr/bin/service
-RUN chmod +x /usr/bin/service
+
+RUN apk  --no-cache add python py-pip
+
+RUN pip install supervisor==$SUPERVISOR_VERSION
 
 ADD VERSION .
 
 EXPOSE 80 443
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
